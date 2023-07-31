@@ -39,6 +39,12 @@ async function run() {
 
     })
 
+
+    app.get('/seervices/:id', async (req, res) => {
+      const id = req.params.id;
+      
+    })
+
  
   } finally {
     // Ensures that the client will close when you finish/error
