@@ -71,6 +71,12 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/order', async (req, res) => {
+      const query = {}
+      const yourOrder = await OrderCollection.find(query).toArray();
+      res.send(yourOrder);
+    })
+
  
   } finally {
     // Ensures that the client will close when you finish/error
