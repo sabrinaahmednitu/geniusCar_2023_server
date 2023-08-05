@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
@@ -73,8 +73,11 @@ async function run() {
     })
 
     app.get('/order', async (req, res) => {
+       const authHeader = req.headers.authorization;
+      console.log('authheader', authHeader);
+    
       const newEmail = req.query.email;
-      const query = { email : newEmail };
+      const query = { email: newEmail };
       const yourOrder = await OrderCollection.find(query).toArray();
       res.send(yourOrder);
     })
@@ -82,10 +85,11 @@ async function run() {
     //jwt for login
     app.post('/login', async (req, res) => {
       const user = req.body;
-      var accessToken = jwt.sign(user, rocess.env.ACCESS_TOKEN_SECRET, {
+      console.log(user);
+      var accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn:'1d'
       });
-      res.send({ accessToken });
+      res.send({accessToken});
     })
 
  
