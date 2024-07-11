@@ -11,6 +11,64 @@ app.use(cors());
 app.use(express.json())
 
 
+// function verifyJWT(req,res,next){
+//   const authHeader = req.headers.authorization;
+//   if (!authHeader) {
+//     return res.status(401).send({ message: 'Unauthorized access' }); //401 mane unothorized
+//   }
+//   const token = authHeader.split(' ')[1];
+//   console.log(token);
+  // verify a token symmetric
+  // jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded)=>{
+  //   if(err){
+  //     return res.status(403).send({ message: 'Forbidden access' });
+  //   }
+  //     console.log('decoded', decoded);
+  // })
+  // console.log('inside verifyJWT', authHeader);
+//   next();
+// }
+
+// function verifyJWT(req, res, next) {
+//   const authHeader = req.headers.authorization;
+//   if (!authHeader) {
+//     return res.status(401).send({ message: 'unAuthorized access' });
+//   }
+//   const token = authHeader.split(' ')[1];
+//   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+//     if (err) {
+//       return res.status(403).send({ message: 'Forbidden access' });
+//     }
+//      console.log('decoded', decoded);
+//      req.decoded = decoded;
+//     next();
+//   });
+// }
+
+
+
+const verifyJWT = (req, res, next) => {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return res
+      .status(401)
+      .send({ error: true, message: 'unauthorized access' });
+  }
+  // bearer token
+  const token = authorization.split(' ')[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res
+        .status(401)
+        .send({ error: true, message: 'unauthorized access' });
+    }
+    req.decoded = decoded;
+    next();
+  });
+};
+
+
 
 
 
@@ -73,24 +131,21 @@ async function run() {
     })
 
     app.get('/order', async (req, res) => {
-       const authHeader = req.headers.authorization;
-      console.log('authheader', authHeader);
-    
-      const newEmail = req.query.email;
+      const newEmail = req.query.email;  
       const query = { email: newEmail };
       const yourOrder = await OrderCollection.find(query).toArray();
       res.send(yourOrder);
     })
 
     //jwt for login
-    app.post('/login', async (req, res) => {
-      const user = req.body;
-      console.log(user);
-      var accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn:'1d'
-      });
-      res.send({accessToken});
-    })
+    // app.post('/login', async (req, res) => {
+    //   const user = req.body;
+    //   var accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    //     expiresIn: '5d',
+    //   });
+    //   // console.log(accessToken);
+    //   res.send({accessToken});
+    // })
 
  
   } finally {
